@@ -35,7 +35,23 @@ An end-to-end data platform that extracts medical business insights from public 
 | Infrastructure     | Docker, Docker Compose   |
 
 ## 🏗️ Project Structure
-
+├── data/ # Data lake storage
+│ ├── raw/ # Raw scraped data
+│ └── processed/ # Processed data outputs
+├── dbt/ # Data transformation
+│ └── medical_analytics/ # dbt project
+├── app/ # Application code
+│ ├── api/ # FastAPI implementation
+│ └── object_detection/ # YOLO image processing
+├── scripts/ # Utility scripts
+│ ├── scraping/ # Telegram scrapers
+│ └── database/ # DB management
+├── docs/ # Documentation
+├── tests/ # Test suites
+├── docker-compose.yml # Container orchestration
+├── Dockerfile # Application container
+├── requirements.txt # Python dependencies
+└── .env # Environment variables
 
 ## 🏁 Getting Started
 
