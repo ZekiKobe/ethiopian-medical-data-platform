@@ -1,0 +1,79 @@
+version: 2
+
+sources:
+  - name: raw
+    schema: raw
+    tables:
+      - name: telegram_messages
+        description: "Raw Telegram messages data"
+        columns:
+          - name: id
+            tests:
+              - not_null
+              - unique
+          - name: channel
+            tests:
+              - not_null
+      - name: telegram_images
+        description: "Raw Telegram images metadata"
+        columns:
+          - name: message_id
+            tests:
+              - not_null
+          - name: channel
+            tests:
+              - not_null
+
+models:
+  - name: stg_telegram_messages
+    description: "Cleaned Telegram messages data"
+    columns:
+      - name: message_id
+        tests:
+          - not_null
+          - unique
+      - name: channel_name
+        tests:
+          - not_null
+          
+  - name: dim_channels
+    description: "Dimension table for Telegram channels"
+    columns:
+      - name: channel_key
+        tests:
+          - not_null
+          - unique
+      - name: channel_name
+        tests:
+          - not_null
+          - unique
+          
+  - name: fct_messages
+    description: "Fact table for Telegram messages"
+    columns:
+      - name: message_key
+        tests:
+          - not_null
+          - unique
+      - name: channel_key
+        tests:
+          - relationships:
+              to: ref('dim_channels')
+              field: channel_key
+      - name: date_key
+        tests:
+          - relationships:
+              to: ref('dim_dates')
+              field: date_key
+              
+      # Custom test for business rule: messages should have either text or media
+      - name: message
+        tests:
+          - custom_message_or_media:
+              config:
+                severity: error
+              query: |
+                SELECT message_key
+                FROM {{ ref('fct_messages') }}
+                WHERE (message IS NULL OR LENGTH(message) = 0)
+                AND has_media = FALSE
