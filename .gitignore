@@ -1,0 +1,10 @@
+.env
+.venv
+venv/
+__pycache__/
+*.py[cod]
+*.sqlite3
+*.log
+data/
+dbt/target/
+dbt/dbt_packages/

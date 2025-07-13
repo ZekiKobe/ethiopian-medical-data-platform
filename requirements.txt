@@ -1,0 +1,30 @@
+# Core
+python-dotenv
+psycopg2-binary
+sqlalchemy
+pandas
+
+# Scraping
+telethon
+python-telegram-bot
+
+# Data Processing
+dbt-postgres
+numpy
+pydantic
+
+# API
+fastapi
+uvicorn
+
+# Object Detection
+opencv-python
+ultralytics  # for YOLO
+
+# Orchestration
+dagster
+dagster-postgres
+dagster-dbt
+
+# Testing
+pytest
