@@ -1,0 +1,12 @@
+medical_analytics:
+  outputs:
+    dev:
+      dbname: medical_data
+      host: localhost
+      pass: root
+      port: 5432
+      schema: medical_schema
+      threads: 1
+      type: postgres
+      user: postgres
+  target: dev
