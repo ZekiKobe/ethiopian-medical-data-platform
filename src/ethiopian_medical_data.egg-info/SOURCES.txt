@@ -1,0 +1,6 @@
+README.md
+pyproject.toml
+src/ethiopian_medical_data.egg-info/PKG-INFO
+src/ethiopian_medical_data.egg-info/SOURCES.txt
+src/ethiopian_medical_data.egg-info/dependency_links.txt
+src/ethiopian_medical_data.egg-info/top_level.txt
