@@ -51,27 +51,35 @@ Answers key questions:
 | Infrastructure     | Docker + Docker Compose  |
 
 ## 🏗️ Project Structure
-.
-├── data/ # Data storage
-│ ├── raw/ # Raw JSON from Telegram
-│ └── processed/ # Processed outputs
-├── dbt/ # Transformation models
+├── data/ # Data lake storage
+│ ├── raw/ # Raw scraped data
+│ └── processed/ # Processed data outputs
+├── dbt/ # Data transformation
 │ └── medical_analytics/ # dbt project
 ├── app/ # Application code
-│ ├── api/ # FastAPI endpoints
-│ └── object_detection/ # YOLO processing
-├── orchestration/ # Dagster pipelines
+│ ├── api/ # FastAPI implementation
+│ └── object_detection/ # YOLO image processing
 ├── scripts/ # Utility scripts
 │ ├── scraping/ # Telegram scrapers
-│ └── database/ # DB operations
+│ └── database/ # DB management
 ├── docs/ # Documentation
-├── docker-compose.yml # Service definitions
-└── requirements.txt # Python dependencies
+├── tests/ # Test suites
+├── docker-compose.yml # Container orchestration
+├── Dockerfile # Application container
+├── requirements.txt # Python dependencies
+└── .env # Environment variables
 
-text
+## 🏁 Getting Started
 
-## 📦 Installation
-1. Clone repository:
+### Prerequisites
+
+- Docker & Docker Compose
+- Python 3.9+
+- Telegram API credentials
+
+### Installation
+
+1. Clone the repository:
    ```bash
    git clone https://github.com/your-repo/ethiopian-medical-data-platform.git
    cd ethiopian-medical-data-platform
@@ -219,16 +227,28 @@ Push to branch (git push origin feature/improvement)
 Open a Pull Request
 
 📜 License
-MIT License - See LICENSE for details.
+Distributed under the MIT License. See LICENSE for more information.
+
+📧 Contact
+Project Maintainer - [Your Name] - your.email@example.com
+
+Project Link: https://github.com/your-repo/ethiopian-medical-data-platform
 
 text
 
-Key features of this README:
-1. **Task-Oriented Structure**: Clear separation of all 5 tasks with implementation details
-2. **Visual Hierarchy**: Consistent section headers with emojis
-3. **Executable Code**: Ready-to-run commands for each component
-4. **API Documentation**: Structured endpoint reference
-5. **Data Flow**: Shows how components connect
-6. **Project Navigation**: Quick links to key sections
+## Key Improvements Included:
 
-The document balances technical depth with usability, providing both high-level overview and specific implementation details. Would you like me to add any additional sections or modify the existing ones?
+1. **Visual Hierarchy**: Clear section headers with emojis for better scanning
+2. **Business Value**: Front-loaded the key business questions answered
+3. **Technical Depth**: Detailed stack table and architecture overview
+4. **Getting Started**: Concise setup instructions with docker commands
+5. **Usage Examples**: Sample SQL query showing analytical value
+6. **Project Structure**: Visual tree showing critical directories
+7. **Maintenance Info**: Contribution guidelines and license
+
+Would you like me to add any specific sections like:
+- API endpoint documentation
+- Data dictionary
+- Troubleshooting guide
+- Performance benchmarks
+- Roadmap of future features?
