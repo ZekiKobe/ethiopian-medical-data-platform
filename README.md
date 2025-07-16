@@ -1,128 +1,234 @@
 # Ethiopian Medical Data Platform
 
-![Data Pipeline Architecture](docs/pipeline_architecture.png) *(placeholder for architecture diagram)*
+![Pipeline Architecture](docs/architecture.png)
 
-An end-to-end data platform that extracts medical business insights from public Telegram channels in Ethiopia, processes the data through a modern ELT pipeline, and exposes analytical insights via API.
+An end-to-end data platform that extracts medical business insights from public Telegram channels in Ethiopia through a modern ELT pipeline with object detection and analytical API.
+
+## Table of Contents
+- [Features](#-features)
+- [Business Insights](#-business-insights)
+- [Technical Stack](#-technical-stack)
+- [Project Structure](#-project-structure)
+- [Installation](#-installation)
+- [Task Details](#-task-details)
+  - [Task 1: Data Scraping](#task-1-data-scraping)
+  - [Task 2: Data Modeling](#task-2-data-modeling)
+  - [Task 3: Object Detection](#task-3-object-detection)
+  - [Task 4: Analytical API](#task-4-analytical-api)
+  - [Task 5: Orchestration](#task-5-orchestration)
+- [API Documentation](#-api-documentation)
+- [Usage Examples](#-usage-examples)
+- [Contributing](#-contributing)
+- [License](#-license)
 
 ## 🚀 Features
+- Telegram data scraping with Telethon
+- Data lake with partitioned JSON storage
+- Star schema data warehouse in PostgreSQL
+- dbt transformations with testing
+- YOLOv8 image object detection
+- FastAPI analytical endpoints
+- Dagster pipeline orchestration
+- Dockerized environment
 
-- **Telegram Data Scraping**: Collect messages and images from public medical channels
-- **Data Lake Storage**: Store raw data in a structured, partitioned format
-- **PostgreSQL Data Warehouse**: Reliable storage with optimized schema
-- **dbt Transformations**: Clean, model, and document data using best practices
-- **YOLO Object Detection**: Enrich image data with detected medical products
-- **FastAPI Analytics**: RESTful endpoints for business insights
-- **Dagster Orchestration**: Reliable pipeline scheduling and monitoring
-
-## 📊 Business Questions Answered
-
-1. Top 10 most mentioned medical products/drugs across channels
-2. Price/availability variations of specific products
-3. Channels with most visual content (pills vs. creams)
-4. Daily/weekly trends in health-related posting volume
+## 📊 Business Insights
+Answers key questions:
+1. Top 10 mentioned medical products
+2. Price/availability across channels
+3. Visual content analysis (pills vs creams)
+4. Daily/weekly posting trends
+5. Channel comparison metrics
 
 ## 🛠️ Technical Stack
-
 | Component          | Technology               |
 |--------------------|--------------------------|
-| Data Extraction    | Telethon (Telegram API)  |
-| Data Storage       | PostgreSQL               |
-| Data Transformation| dbt (Data Build Tool)    |
-| Data Modeling      | Star Schema              |
-| Image Processing   | YOLOv8 (Ultralytics)     |
-| API Layer          | FastAPI                  |
+| Data Extraction    | Telethon                 |
+| Data Storage       | PostgreSQL 13            |
+| Transformation     | dbt-core 1.10+           |
+| Object Detection   | YOLOv8 (Ultralytics)     |
+| API Framework      | FastAPI + Uvicorn        |
 | Orchestration      | Dagster                  |
-| Infrastructure     | Docker, Docker Compose   |
+| Infrastructure     | Docker + Docker Compose  |
 
 ## 🏗️ Project Structure
+.
+├── data/ # Data storage
+│ ├── raw/ # Raw JSON from Telegram
+│ └── processed/ # Processed outputs
+├── dbt/ # Transformation models
+│ └── medical_analytics/ # dbt project
+├── app/ # Application code
+│ ├── api/ # FastAPI endpoints
+│ └── object_detection/ # YOLO processing
+├── orchestration/ # Dagster pipelines
+├── scripts/ # Utility scripts
+│ ├── scraping/ # Telegram scrapers
+│ └── database/ # DB operations
+├── docs/ # Documentation
+├── docker-compose.yml # Service definitions
+└── requirements.txt # Python dependencies
 
+text
 
-## 🏁 Getting Started
-
-### Prerequisites
-
-- Docker & Docker Compose
-- Python 3.9+
-- Telegram API credentials
-
-### Installation
-
-1. Clone the repository:
+## 📦 Installation
+1. Clone repository:
    ```bash
    git clone https://github.com/your-repo/ethiopian-medical-data-platform.git
    cd ethiopian-medical-data-platform
+Configure environment:
 
-## Set up environment:
+bash
 cp .env.example .env
-# Edit .env with your credentials
-## Build and start services:
+# Edit with your Telegram API credentials
+Start services:
+
+bash
 docker-compose up -d --build
+Initialize database:
 
-## Initialize dbt:
-docker-compose exec dbt bash
-cd dbt/medical_analytics
-dbt deps
-dbt run
+bash
+docker-compose exec dbt python scripts/database/load_raw_data.py
+🔍 Task Details
+Task 1: Data Scraping
+Key Components:
 
-Running the Pipeline
-Scrape Telegram data:
+scripts/scraping/telegram_scraper.py: Main scraping script
+
+scripts/scraping/image_downloader.py: Image download utility
+
+Usage:
 
 bash
 docker-compose exec dbt python scripts/scraping/telegram_scraper.py
-Process images with YOLO:
+Output Structure:
+
+text
+data/raw/
+├── telegram_messages/
+│   └── YYYY-MM-DD/
+│       └── channel_name.json
+└── telegram_images/
+    └── YYYY-MM-DD/
+        └── channel_name/
+            ├── 12345.jpg
+            └── 12345.json
+Task 2: Data Modeling
+dbt Models:
+
+Staging: stg_telegram_messages, stg_telegram_images
+
+Dimensions: dim_channels, dim_dates
+
+Facts: fct_messages, fct_image_detections
+
+Run Transformations:
+
+bash
+docker-compose exec dbt bash
+cd dbt/medical_analytics
+dbt run
+dbt test
+Task 3: Object Detection
+Processing Script:
 
 bash
 docker-compose exec dbt python app/object_detection/process_images.py
-Access the API:
+Detection Schema:
 
-Swagger docs: http://localhost:8000/docs
-
-Example endpoint: GET /api/v1/top_products?limit=10
-
-📈 Example Queries
 sql
--- Top 10 mentioned products
+CREATE TABLE analytics.fct_image_detections (
+    detection_key VARCHAR(255) PRIMARY KEY,
+    message_id INTEGER REFERENCES fct_messages,
+    class_name VARCHAR(50),
+    confidence FLOAT,
+    is_medical BOOLEAN
+);
+Task 4: Analytical API
+Endpoints:
+
+GET /api/analytics/top-products
+
+GET /api/channels/{channel}/activity
+
+GET /api/search/messages?query=
+
+Access API:
+
+bash
+curl http://localhost:8000/api/analytics/top-products?limit=5
+Task 5: Orchestration
+Run Pipeline:
+
+bash
+dagster dev -f orchestration/__init__.py
+Scheduled Jobs:
+
+python
+# Runs daily at 2 AM
+daily_pipeline_schedule = ScheduleDefinition(
+    job=medical_data_pipeline,
+    cron_schedule="0 2 * * *"
+)
+📚 API Documentation
+Endpoint	Method	Parameters	Description
+/api/analytics/top-products	GET	limit: int	Top mentioned products
+/api/channels/activity	GET	period: enum(day,week,month)	Posting frequency trends
+/api/search/messages	GET	query: str, channel: str	Full-text message search
+💡 Usage Examples
+Sample API Request:
+
+bash
+curl "http://localhost:8000/api/analytics/top-products?limit=3"
+Expected Response:
+
+json
+[
+  {
+    "product_name": "paracetamol",
+    "mention_count": 142,
+    "channels": ["chemed", "tikvahpharma"]
+  },
+  {
+    "product_name": "amoxicillin",
+    "mention_count": 98,
+    "channels": ["chemed"]
+  }
+]
+Sample SQL Query:
+
+sql
+-- Find channels with most visual content
 SELECT 
-    UNNEST(product_mentions) AS product,
-    COUNT(*) AS mentions
-FROM analytics.fct_messages
+    c.channel_name,
+    COUNT(d.detection_key) AS medical_images
+FROM analytics.dim_channels c
+JOIN analytics.fct_messages m ON c.channel_key = m.channel_key
+JOIN analytics.fct_image_detections d ON m.message_key = d.message_key
+WHERE d.is_medical = TRUE
 GROUP BY 1
-ORDER BY 2 DESC
-LIMIT 10;
+ORDER BY 2 DESC;
 🤝 Contributing
-Fork the project
+Fork the repository
 
-Create your feature branch (git checkout -b feature/AmazingFeature)
+Create feature branch (git checkout -b feature/improvement)
 
-Commit your changes (git commit -m 'Add some amazing feature')
+Commit changes (git commit -m 'Add new feature')
 
-Push to the branch (git push origin feature/AmazingFeature)
+Push to branch (git push origin feature/improvement)
 
 Open a Pull Request
 
 📜 License
-Distributed under the MIT License. See LICENSE for more information.
-
-📧 Contact
-Project Maintainer - [Your Name] - your.email@example.com
-
-Project Link: https://github.com/your-repo/ethiopian-medical-data-platform
+MIT License - See LICENSE for details.
 
 text
 
-## Key Improvements Included:
+Key features of this README:
+1. **Task-Oriented Structure**: Clear separation of all 5 tasks with implementation details
+2. **Visual Hierarchy**: Consistent section headers with emojis
+3. **Executable Code**: Ready-to-run commands for each component
+4. **API Documentation**: Structured endpoint reference
+5. **Data Flow**: Shows how components connect
+6. **Project Navigation**: Quick links to key sections
 
-1. **Visual Hierarchy**: Clear section headers with emojis for better scanning
-2. **Business Value**: Front-loaded the key business questions answered
-3. **Technical Depth**: Detailed stack table and architecture overview
-4. **Getting Started**: Concise setup instructions with docker commands
-5. **Usage Examples**: Sample SQL query showing analytical value
-6. **Project Structure**: Visual tree showing critical directories
-7. **Maintenance Info**: Contribution guidelines and license
-
-Would you like me to add any specific sections like:
-- API endpoint documentation
-- Data dictionary
-- Troubleshooting guide
-- Performance benchmarks
-- Roadmap of future features?
+The document balances technical depth with usability, providing both high-level overview and specific implementation details. Would you like me to add any additional sections or modify the existing ones?
